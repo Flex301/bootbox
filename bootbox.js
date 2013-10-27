@@ -301,13 +301,9 @@ window.bootbox = window.bootbox || (function init($, undefined) {
     /**
      * overrides; undo anything the user tried to set they shouldn't have
      */
-    options.buttons.cancel.callback = options.onEscape = function() {
-      return options.callback(false);
-    };
+        options.buttons.cancel.callback = options.onEscape = options.callback;
 
-    options.buttons.confirm.callback = function() {
-      return options.callback(true);
-    };
+        options.buttons.confirm.callback = options.callback;
 
     // confirm specific validation
     if (!$.isFunction(options.callback)) {
@@ -623,10 +619,14 @@ window.bootbox = window.bootbox || (function init($, undefined) {
      */
 
     dialog.on("click", ".modal-footer button", function(e) {
-      var callbackKey = $(this).data("bb-handler");
+            var deferred = $.Deferred();
 
-      processCallback(e, dialog, callbacks[callbackKey]);
+            deferred.done(function() {
+                dialog.modal("hide");
+            });
 
+            var callbackKey = $(this).data("bb-handler");
+            callbacks[callbackKey](e, deferred);
     });
 
     dialog.on("click", ".bootbox-close-button", function(e) {
@@ -760,7 +760,7 @@ window.bootbox = window.bootbox || (function init($, undefined) {
     pl : {
       OK      : "OK",
       CANCEL  : "Anuluj",
-      CONFIRM : "Potwierdź"
+            CONFIRM : "Potwierdź"
     },
     ru : {
       OK      : "OK",
@@ -774,13 +774,13 @@ window.bootbox = window.bootbox || (function init($, undefined) {
     },
     zh_CN : {
       OK      : "OK",
-      CANCEL  : "取消",
-      CONFIRM : "确认"
+            CANCEL  : "取消",
+            CONFIRM : "确认"
     },
     zh_TW : {
       OK      : "OK",
-      CANCEL  : "取消",
-      CONFIRM : "確認"
+            CANCEL  : "取消",
+            CONFIRM : "確認"
     }
   };
 
